@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Site.Models.ReportViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TypeReport)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalRegisters)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RegistersProcess)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserRequest)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StatusReport)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TypeReport)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalRegisters)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RegistersProcess)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserRequest)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreateDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StatusReport)
+        </td>
+    </tr>
+}
+
+</table>

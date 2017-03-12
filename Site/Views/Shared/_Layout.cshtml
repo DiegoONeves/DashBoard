@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Reports", "Index", "Report")</li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Importações <span class="caret"></span></a>
+                            <ul class="dropdown-menu" id="notificacoes">
+
+                            </ul>
+                        </li>
+                    }
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @if (User.Identity.IsAuthenticated)
+    {
+    <!-- SignalR library. -->
+        <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
+    <!-- SignalR hub script gerado automaticamente pelo serviço -->
+        <script src="http://localhost:8080/signalr/hubs"></script>
+    <!-- Conexão com SignalR e Atualização de Mensagens -->
+        <script type="text/javascript">
+
+        // Definindo a URL onde o serviço está rodando
+        $.connection.hub.url = "http://localhost:8080/signalr";
+
+        // Conectando no Hub
+        var report = $.connection.reportHub;
+
+        report.client.updateProgress = function (reports) {
+            var jsonReports = $.parseJSON(reports);
+            var li = "";
+
+            if (jsonReports.length == 0)
+                li = '<li>Nenhum arquivo em processamento<</li>';
+            else {
+                $.each(jsonReports, function (i, item) {
+                    li += '<li>';
+                    li += '<form style="margin:5px 10px; width: 500px;">'
+                    li += '<div class="form-group">';
+                    li += '<div class="progress">';
+                    li += '<div class="progress-bar" role="progressbar" aria-valuenow="' + item.PercentProcess + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + item.PercentProcess + '%;">';
+                    li += '</div></div>';
+                    li += '<label>' + item.PercentProcess + '% Processado</label>';
+                    li += '<p>Nome: ' + item.TypeReport + '</p>';
+                    li += '<p>Criado em: ' + item.CreateDate + '</p>';
+                    li += '</div>';
+                    li += '</form>';
+                    li += '</li>';
+                });
+            }
+
+            $("#notificacoes").empty();
+            $("#notificacoes").append(li);
+
+        }
+
+        // Iniciando a conexão ao carregar a página
+        $.connection.hub.start().done(function () {
+            report.server.subscribeUser('@User.Identity.Name');
+            });
+        </script>
+    }
+</body>
+</html>
